@@ -100,14 +100,13 @@
 
 - name: tar
   unarchive:
-    src: tmp/VirtualBox.tar.bz2
-    dest: linux.amd64.bin
+    src: "/vagrant/icebox/third_party/virtualbox/tmp/VirtualBox.tar.bz2"
+    dest: "/vagrant/icebox/third_party/virtualbox/linux.amd64.bin"
     remote_src: yes
-  args:
-    chdir: "/vagrant/icebox/third_party/virtualbox"
   become: false
 
 - name: remove temporary directory
   file:
     path: "/vagrant/icebox/third_party/virtualbox/tmp"
     state: absent
+  become: false
