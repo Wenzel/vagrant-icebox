@@ -91,3 +91,23 @@
     path: "/vagrant/icebox/third_party/virtualbox/linux.amd64.bin"
     state: directory
   become: false
+
+- name: 7zip
+  command: 7za -y e out/linux.amd64/release/bin/*.run -otmp
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox"
+  become: false
+
+- name: tar
+  unarchive:
+    src: tmp/VirtualBox.tar.bz2
+    dest: linux.amd64.bin
+    remote_src: yes
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox"
+  become: false
+
+- name: remove temporary directory
+  file:
+    path: "/vagrant/icebox/third_party/virtualbox/tmp"
+    state: absent
