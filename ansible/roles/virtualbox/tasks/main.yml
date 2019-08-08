@@ -1,0 +1,92 @@
+---
+- name: update cache
+  apt:
+    update_cache: yes
+
+- name: install build dependencies
+  package:
+    name: "{{ item }}"
+  with_items:
+    - cmake
+    - python3
+    - gcc-8
+    - g++-8
+    - clang-format
+    - ninja-build
+    - acpica-tools
+    - build-essential
+    - g++-multilib
+    - libcap-dev
+    - libcurl4-openssl-dev
+    - libdevmapper-dev
+    - libidl-dev
+    - libelf-dev
+    - libopus-dev
+    - libpam0g-dev
+    - libqt5x11extras5-dev
+    - libsdl1.2-dev
+    - libsdl2-dev
+    - libssl-dev
+    - libvpx-dev
+    - libxmu-dev
+    - linux-headers-amd64
+    - linux-libc-dev
+    - makeself
+    - p7zip-full
+    - python-dev
+    - qt5-default
+    - qttoools5-dev-tools
+    - xsltproc
+
+- name: symlink FDP into virtualbox sources
+  file:
+    src: "/vagrant/icebox/src/FDP"
+    dest: "/vagrant/icebox/third_party/virtualbox/include"
+    state: link
+  become: false
+
+- name: configure build
+  command: ./configure --disable-hardening --disable-docs --disable-java
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox"
+  become: false
+
+- name: build modules
+  command: ". ./env.sh && kmk VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox"
+  become: false
+
+- name: build
+  command: "make -j{{ ansible_processor_vcpus }}"
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin/src"
+  become: false
+
+- name: install
+  command: make install
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin/src"
+
+- name: create additions directory
+  file:
+    path: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin/additions"
+    state: directory
+  become: false
+
+- name: create VBoxGuestAdditions.iso file
+  file:
+    path: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin/additions/VBoxGuestAdditions.iso"
+    state: touch
+
+- name: kmk again
+  command: ". ./env.sh && kmk packing VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox"
+  become: false
+
+- name: create linux.amd64.bin directory
+  file:
+    path: "/vagrant/icebox/third_party/virtualbox/linux.amd64.bin"
+    state: directory
+  become: false
