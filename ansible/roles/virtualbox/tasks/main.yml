@@ -28,6 +28,7 @@
     - libsdl2-dev
     - libssl-dev
     - libvpx-dev
+    - libxml2-dev
     - libxmu-dev
     - linux-headers-amd64
     - linux-libc-dev
@@ -41,7 +42,7 @@
 - name: symlink FDP into virtualbox sources
   file:
     src: "/vagrant/icebox/src/FDP"
-    dest: "/vagrant/icebox/third_party/virtualbox/include"
+    dest: "/vagrant/icebox/third_party/virtualbox/include/FDP"
     state: link
   become: false
 
@@ -52,7 +53,7 @@
   become: false
 
 - name: build modules
-  command: ". ./env.sh && kmk VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
+  shell: ". ./env.sh && kmk VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
   args:
     chdir: "/vagrant/icebox/third_party/virtualbox"
   become: false
@@ -80,7 +81,7 @@
     state: touch
 
 - name: kmk again
-  command: ". ./env.sh && kmk packing VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
+  shell: ". ./env.sh && kmk packing VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
   args:
     chdir: "/vagrant/icebox/third_party/virtualbox"
   become: false
