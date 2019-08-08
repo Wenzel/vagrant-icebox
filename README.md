@@ -3,7 +3,7 @@
 [![Gitter](https://badges.gitter.im/vagrant-icebox/community.svg)](https://gitter.im/vagrant-icebox/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-A vagrant environment to develop Icebox and VirtualBox VMI
+> A vagrant environment to develop Icebox and VirtualBox VMI
 
 ## Table of Contents
 
@@ -17,6 +17,12 @@ A vagrant environment to develop Icebox and VirtualBox VMI
 - [License](#license)
 
 ## Overview
+
+Icebox is a debugger and tracer working at the hypervisor-level, via virtual
+machine introspection.
+
+As it requires a modified VirtualBox and a complicated setup,
+this project aims to lower the entry barrier for curious developers and users.
 
 ## Requirements
 
