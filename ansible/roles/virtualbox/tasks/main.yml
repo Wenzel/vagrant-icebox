@@ -35,7 +35,7 @@
     - p7zip-full
     - python-dev
     - qt5-default
-    - qttoools5-dev-tools
+    - qttools5-dev-tools
     - xsltproc
 
 - name: symlink FDP into virtualbox sources
