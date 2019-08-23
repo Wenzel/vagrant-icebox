@@ -105,8 +105,11 @@
     remote_src: yes
   become: false
 
+# cannot use file module to remove directory because of weird race condition
 - name: remove temporary directory
-  file:
-    path: "/vagrant/icebox/third_party/virtualbox/tmp"
-    state: absent
+  #   file:
+  #     path: "/vagrant/icebox/third_party/virtualbox/tmp"
+  #     state: absent
+  #   become: false
+  command: "rm -rf /vagrant/icebox/third_party/virtualbox/tmp"
   become: false
