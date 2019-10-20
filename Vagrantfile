@@ -5,8 +5,16 @@ Vagrant.configure(2) do |config|
 
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
-    icebox_local = 'FILL_ME'
+    icebox_local = '/home/wenzel/Projets/icebox'
     config.vm.synced_folder icebox_local, "/vagrant/icebox",
+        :nfs => true,
+        :nfs_version => 4,
+        :nfs_udp => false,
+        # speedup NFS with custom options
+        :linux__nfs_options => ["rw", "no_subtree_check", "all_squash", "async"]
+
+    rust_local = '/home/wenzel/Projets/rust'
+    config.vm.synced_folder rust_local, "/vagrant/rust",
         :nfs => true,
         :nfs_version => 4,
         :nfs_udp => false,
