@@ -1,5 +1,6 @@
 Vagrant.configure(2) do |config|
     config.vm.box = "generic/debian10"
+    config.vm.box_version = "1.9.36"
     config.vm.define "icebox"
 
     config.vm.synced_folder ".", "/vagrant", disabled: true
@@ -28,17 +29,14 @@ Vagrant.configure(2) do |config|
         ansible.playbook = "ansible/playbook_1.yml"
     end
 
-    # config.vm.provision :reload
+    config.vm.provision :reload
 
-    # config.vm.provision "ansible" do |ansible|
-    #     ansible.compatibility_mode = '2.0'
-    #     # debug
-    #     # ansible.verbose =  '-vvv'
-    #     # ansible.start_at_task =  ''
-    #     ansible.playbook = "ansible/playbook_2.yml"
-    #     ansible.extra_vars = {
-    #         'root_dir': root_dir,
-    #     }
-    # end
+    config.vm.provision "ansible" do |ansible|
+        ansible.compatibility_mode = '2.0'
+        # debug
+        # ansible.verbose =  '-vvv'
+        # ansible.start_at_task =  ''
+        ansible.playbook = "ansible/playbook_2.yml"
+    end
 end
 
