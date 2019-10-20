@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: get kernel version
+      command: uname -r
+      register: uname
+
+    - name: display kernel version
+      debug:
+        var: uname.stdout
+
+    - name: load the modules
+      command: ./vboxdrv.sh start
+      args:
+        chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin"
+  roles:
+    - remote
+    - vm

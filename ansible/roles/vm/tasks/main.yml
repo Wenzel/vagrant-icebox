@@ -1,0 +1,21 @@
+---
+- name: install Packer
+  apt:
+    name: packer
+    state: present
+
+- name: upload templates
+  synchronize:
+    src: files/templates
+    dest: /home/vagrant
+  become: false
+
+- name: fix permissions on kvm node
+  file:
+    path: /dev/vboxdrv
+    mode: 0666
+
+- name: build vms
+  include: build.yml
+  with_items:
+    - { name: 'winxp', ram: '512', packer_template: 'windows.json', packer_varfile: 'winxp.json' }
