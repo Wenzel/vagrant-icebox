@@ -39,6 +39,14 @@
     - qttools5-dev-tools
     - xsltproc
 
+- name: install unsigned kernel
+  package:
+    name: "{{ item }}"
+  with_items:
+    - linux-image-4.19.0-6-amd64-unsigned
+
+
+
 - name: symlink FDP into virtualbox sources
   file:
     src: "/vagrant/icebox/src/FDP"
@@ -53,7 +61,7 @@
   become: false
 
 - name: build modules
-  shell: ". ./env.sh && kmk VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1 BUILD_TYPE=debug"
+  shell: ". ./env.sh && kmk VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
   args:
     chdir: "/vagrant/icebox/third_party/virtualbox"
   become: false
@@ -81,7 +89,7 @@
     state: touch
 
 - name: kmk again
-  shell: ". ./env.sh && kmk packing VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1 BUILD_TYPE=debug"
+  shell: ". ./env.sh && kmk packing VBOX_WITH_ADDITIONS= VBOX_WITH_TESTCASES= VBOX_WITH_TESTSUITE= VBOX_DO_STRIP=1"
   args:
     chdir: "/vagrant/icebox/third_party/virtualbox"
   become: false
@@ -105,11 +113,25 @@
     remote_src: yes
   become: false
 
-# cannot use file module to remove directory because of weird race condition
-- name: remove temporary directory
+  # TODO: buggy - Directory not empty ??
+  # - name: remove temporary directory
   #   file:
   #     path: "/vagrant/icebox/third_party/virtualbox/tmp"
   #     state: absent
   #   become: false
-  command: "rm -rf /vagrant/icebox/third_party/virtualbox/tmp"
-  become: false
+
+- name: create vboxusers group
+  group:
+    name: vboxusers
+    state: present
+
+- name: add vagrant to vboxusers group
+  user:
+    name: vagrant
+    groups: vboxusers
+    append: yes
+
+- name: build and load the modules
+  command: ./vboxdrv.sh start
+  args:
+    chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin"
