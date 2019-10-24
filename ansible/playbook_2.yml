@@ -14,6 +14,11 @@
       command: ./vboxdrv.sh start
       args:
         chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin"
+
+    - name: fix /dev/vboxdrv permissions
+      file:
+        path: /dev/vboxdrv
+        mode: 0660
   roles:
     - remote
     - vm
