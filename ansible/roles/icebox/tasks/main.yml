@@ -1,0 +1,32 @@
+---
+- name: configure python alternatives
+  command: "{{ item }}"
+  with_items:
+    - 'update-alternatives --install /usr/bin/python python /usr/bin/python2 1'
+    - 'update-alternatives --install /usr/bin/python python /usr/bin/python3 2'
+
+- name: install build dependencies
+  package:
+    name: "{{ item }}"
+  with_items:
+    - cmake
+    - python3
+    - gcc-8
+    - g++-8
+    - ninja-build
+
+- name: configure build (gcc)
+  command: ./configure.sh
+  args:
+    chdir: "/vagrant/icebox/build"
+  environment:
+    CC: '/usr/bin/gcc-8'
+    CXX: '/usr/bin/g++-8'
+    TARGET: 'Ninja'
+  become: false
+
+- name: build
+  command: ninja
+  args:
+    chdir: "/vagrant/icebox/out/x64"
+  become: false
