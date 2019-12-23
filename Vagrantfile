@@ -1,11 +1,11 @@
 Vagrant.configure(2) do |config|
-    config.vm.box = "generic/debian10"
-    config.vm.box_version = "1.9.36"
+    config.vm.box = "generic/ubuntu1804"
+    config.vm.box_version = "2.0.6"
     config.vm.define "icebox"
 
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
-    icebox_local = '/home/wenzel/Projets/icebox'
+    icebox_local = ''
     config.vm.synced_folder icebox_local, "/vagrant/icebox",
         :nfs => true,
         :nfs_version => 4,
@@ -13,7 +13,7 @@ Vagrant.configure(2) do |config|
         # speedup NFS with custom options
         :linux__nfs_options => ["rw", "no_subtree_check", "all_squash", "async"]
 
-    rust_local = '/home/wenzel/Projets/rust'
+    rust_local = ''
     config.vm.synced_folder rust_local, "/vagrant/rust",
         :nfs => true,
         :nfs_version => 4,

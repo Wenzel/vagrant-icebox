@@ -30,7 +30,7 @@
     - libvpx-dev
     - libxml2-dev
     - libxmu-dev
-    - linux-headers-amd64
+    - linux-headers-generic
     - linux-libc-dev
     - makeself
     - p7zip-full
@@ -38,14 +38,6 @@
     - qt5-default
     - qttools5-dev-tools
     - xsltproc
-
-- name: install unsigned kernel
-  package:
-    name: "{{ item }}"
-  with_items:
-    - linux-image-4.19.0-6-amd64-unsigned
-
-
 
 - name: symlink FDP into virtualbox sources
   file:
