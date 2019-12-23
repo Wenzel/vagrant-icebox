@@ -1,19 +1,50 @@
 ---
-- name: install Packer
-  apt:
-    name: packer
-    state: present
+- name: install virt-manager and libvirt
+  package:
+    name: "{{ item }}"
+  with_items:
+    - virt-manager
+    - libvirt-daemon-system
 
-- name: upload templates
-  synchronize:
-    src: files/templates
-    dest: /home/vagrant
+- name: start libvirt
+  service:
+    name: libvirtd
+    state: started
+    enabled: yes
+
+- name: install XFCE desktop
+  package:
+    name: "{{ item }}"
+  with_items:
+    - xfce4
+
+- name: download Packer
+  get_url:
+    url: https://releases.hashicorp.com/packer/1.4.5/packer_1.4.5_linux_amd64.zip
+    dest: /tmp/packer.zip
   become: false
+
+- name: extract Packer
+  unarchive:
+    src: /tmp/packer.zip
+    dest: /usr/local/bin
+    remote_src: yes
+
+- name: remove packer archive
+  file:
+    path: /tmp/packer.zip
+    state: absent
 
 - name: fix permissions on kvm node
   file:
     path: /dev/vboxdrv
     mode: 0666
+
+- name: clone packer templates
+  git:
+    repo: https://github.com/Wenzel/packer-templates
+    dest: /home/vagrant/packer-templates
+  become: false
 
 - name: build vms
   include: build.yml
