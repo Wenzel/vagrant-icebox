@@ -98,12 +98,41 @@
     chdir: "/vagrant/icebox/third_party/virtualbox"
   become: false
 
-- name: tar
+- name: extract archive in linux.amd64.bin
   unarchive:
     src: "/vagrant/icebox/third_party/virtualbox/tmp/VirtualBox.tar.bz2"
     dest: "/vagrant/icebox/third_party/virtualbox/linux.amd64.bin"
     remote_src: yes
   become: false
+
+- name: find all VirtualBox libraries
+  find:
+    paths: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin"
+    patterns: '*.so'
+  register: vbox_libs
+
+- name: symlinks VirtualBox libraries to fake system-wide installation
+  file:
+    src: "{{ item.path }}"
+    path: "/usr/lib/{{ item.path | basename }}"
+    owner: root
+    group: root
+    state: link
+  loop: "{{ vbox_libs.files }}"
+
+- name: symlinks VirtualBox binaries to fake system-wide installation
+  file:
+    src: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin/{{ item }}"
+    path: "/usr/local/bin/{{ item }}"
+    owner: root
+    group: root
+    state: link
+  with_items:
+    - 'VirtualBox'
+    - 'VBoxManage'
+    - 'VBoxSVC'
+    - 'VBoxHeadless'
+    - 'vboxdrv.sh'
 
   # TODO: buggy - Directory not empty ??
   # - name: remove temporary directory
@@ -124,6 +153,4 @@
     append: yes
 
 - name: build and load the modules
-  command: ./vboxdrv.sh start
-  args:
-    chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin"
+  command: vboxdrv.sh start

@@ -11,9 +11,7 @@
         var: uname.stdout
 
     - name: load the modules
-      command: ./vboxdrv.sh start
-      args:
-        chdir: "/vagrant/icebox/third_party/virtualbox/out/linux.amd64/release/bin"
+      command: vboxdrv.sh start
 
     - name: fix /dev/vboxdrv permissions
       file:
